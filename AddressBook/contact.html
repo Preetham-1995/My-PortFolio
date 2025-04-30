@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="background-animation">
@@ -28,7 +30,7 @@
         <div id="shooting-stars-container"></div>
     </div>
     <header>
-        <div class="logo">SAI PREETHAM REDDY PENNABADI</div>
+        <div class="logo"><a href="./index.html">SAI PREETHAM REDDY PENNABADI</a></div>
         <div class="hamburger" aria-label="Menu">
             <span class="line1"></span>
             <span class="line2"></span>
@@ -118,42 +120,53 @@
             });
         });
 
+        (function() {
+            emailjs.init({
+                publicKey: 'a8lU56_GHjxh5F4fh',
+            });
+        })();
+
         document.getElementById('emailForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const submitButton = this.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.textContent = 'Sending...';
-
-            const formData = new FormData(this);
-
-            fetch('submit_contact.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                try {
-                    const jsonData = JSON.parse(data);
-                    if (jsonData.status === 'success') {
-                        alert('Thank you! Your message has been sent successfully.');
-                        this.reset();
-                    } else {
-                        alert('Please try again in a few moments.');
-                    }
-                } catch (e) {
-                    alert('Thank you! Your message has been received.');
-                    this.reset();
-                }
-            })
-            .catch(error => {
-                alert('Thank you! Your message has been received.');
-                this.reset();
-            })
-            .finally(() => {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Send Message';
-            });
+            
+            const templateParams = {
+                to_name: "Sai Preetham Reddy",
+                from_name: document.getElementById('name').value,
+                from_email: document.getElementById('email').value,
+                user_mob_number: document.getElementById('phone').value,  // Changed from phone_number to user_mob_number
+                message: document.getElementById('message').value,
+                to_email: 'psaipreethamreddy031@gmail.com',
+                reply_to: document.getElementById('email').value
+            };
+            
+            emailjs.send('service_x8fxqa8', 'template_xda87q9', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Your message has been sent successfully. I will get back to you soon!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                    document.getElementById('emailForm').reset();
+                })
+                .catch(function(error) {
+                    console.error('FAILED...', error);
+                    Swal.fire({
+                        title: 'Oops...',
+                        text: 'Something went wrong! Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                })
+                .finally(function() {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Send Message';
+                });
         });
 
         // Create shooting stars
@@ -218,5 +231,6 @@
             });
         });
     </script>
+  
 </body>
-</html> 
+</html>
