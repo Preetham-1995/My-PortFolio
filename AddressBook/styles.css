@@ -13,7 +13,10 @@ body {
     background-color: rgba(0, 30, 60, 0.8);
     color: white;
 }
-
+a[href="index.html"] {
+  color: white;
+  text-decoration: none; /* Optional */
+}
 /* Header styles */
 header {
     position: fixed;
